@@ -1,7 +1,3 @@
-# Docker
-# Build a Docker image
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - main
 
@@ -26,3 +22,37 @@ stages:
         repository: 'tomsilhouette/my-react-app'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
+- stage: Push
+  displayName: Push DevOps base image
+  jobs:
+  - job: Push
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        buildType: 'current'
+        artifactName: 'MY_ARTIFACT'
+        targetPath: '$(Pipeline.Workspace)'
+    - task: Bash@3
+      displayName: Load Docker Image
+      inputs:
+        targetType: 'inline'
+        script: |      
+          docker load --input $(Pipeline.Workspace)/MY_IMAGE_FILE.tar
+          docker tag tomsilhouette/my-react-app:$(tag) tomsilhouette/my-react-app:MY_ADDITIONAL_TAG
+    - task: Docker@2
+      displayName: push development tags
+      inputs:
+        containerRegistry: 'docker'
+        repository: 'tomsilhouette/my-react-app'
+        command: 'push'
+        tags: | 
+          $(tag)
+    - task: Docker@2
+      condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+      displayName: push 0-devops tag
+      inputs:
+        containerRegistry: 'docker'
+        repository: 'tomsilhouette/my-react-app'
+        command: 'push'
+        tags: | 
+          MY_ADDITIONAL_TAG
