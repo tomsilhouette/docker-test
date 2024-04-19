@@ -1,9 +1,4 @@
 # Docker
-  inputs:
-    containerRegistry: 'docker'
-    repository: 'tomsilhouette/my-react-app'
-    command: 'buildAndPush'
-    Dockerfile: '**/Dockerfile'
 # Build a Docker image
 # https://docs.microsoft.com/azure/devops/pipelines/languages/docker
 
@@ -26,11 +21,6 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
-        inputs:
-        command: build
-        dockerfile: '**/Dockerfile'
-        tags: |
-          $(tag)
       inputs:
         containerRegistry: 'docker'
         repository: 'tomsilhouette/my-react-app'
