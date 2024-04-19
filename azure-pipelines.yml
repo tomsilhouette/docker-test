@@ -26,6 +26,11 @@ stages:
       vmImage: ubuntu-latest
     steps:
     - task: Docker@2
+        inputs:
+        command: build
+        dockerfile: '**/Dockerfile'
+        tags: |
+          $(tag)
       inputs:
         containerRegistry: 'docker'
         repository: 'tomsilhouette/my-react-app'
