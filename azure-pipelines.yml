@@ -30,7 +30,7 @@ stages:
     - task: DownloadPipelineArtifact@2
       inputs:
         buildType: 'current'
-        artifactName: 'MY_ARTIFACT'
+        artifactName: 'my-react-app'
         targetPath: '$(Pipeline.Workspace)'
     - task: Bash@3
       displayName: Load Docker Image
